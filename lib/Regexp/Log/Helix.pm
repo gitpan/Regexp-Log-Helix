@@ -4,7 +4,7 @@ use strict;
 use base qw( Regexp::Log );
 use vars qw( $VERSION %DEFAULT %FORMAT %REGEXP );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.4 $ =~ /(\d+)\.(\d+)/);
 
 =head1 NAME
 
@@ -61,7 +61,7 @@ Regexp::Log::Helix enables simple parsing of log files created by Helix.
             '%authuser' => '(?#=authuser).*?(?#!authuser)',                 # authuser
 	    '%date'     => '(?#=date)\[(?#=ts)\d{2}/\w{3}/\d{4}(?::\d{2}){3} [-+]\d{4}(?#!ts)\](?#!date)\s?',
 
-            '%request'  => '(?#=request)"(?#=req).*?(?#!req)"(?#!request)',
+            '%request'  => '(?#=request)"(?#=req)(?#=req_method)\w+(?#!req_method) (?#=req_file)[^\s\?]+(?#!req_file)(?:\?(?#=req_query)\S+(?#!req_query))? (?#=req_protocol).*?(?#!req_protocol)(?#!req)"(?#!request)',
 	    '%status'   => '(?#=status)\d+(?#!status)',
             '%bytes'       => '(?#=bytes)-|\d+(?#!bytes)',                # bytes
             '%useragent'   => '(?#=useragent)\[(?#=ua).*?(?#!ua)\](?#!useragent)',         
@@ -84,7 +84,11 @@ __END__
 
 =over 4
 
-=item * ip rfc authuser ts req status bytes
+=item * ip rfc authuser date ts 
+
+=item * request req req_method req_file req_query req_protocol
+
+=item * status bytes
 
 =item * ua id stats
 
@@ -118,6 +122,9 @@ I have only written support for logging style 3.  Adding 1,2 and 4 may be helpfu
 =head1 CHANGES
 
 $Log: Helix.pm,v $
+Revision 1.4  2006/08/22 21:40:03  bkram
+Added support for req_method req_file req_query req_protocol
+
 Revision 1.3  2006/08/22 16:52:17  bkram
 fixed version formatting
 
